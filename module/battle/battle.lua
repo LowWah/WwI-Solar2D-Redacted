@@ -750,6 +750,11 @@ function battlemanager_base:completeAction(actingBattler, skill, targets, isFoll
         actingBattler:completeActionActingSelf(actingBattler, skill, targets, self)
     end
 
+    --For Nova, should setup so completeActionActingSelf not followup is in skill
+    if actingBattler.completeActionActingSelfIncludeFollow then
+        actingBattler:completeActionActingSelfIncludeFollow(actingBattler, skill, targets, self)
+    end
+
     --check end hyper after ultimate here as if we do it as part of pay skill cost, it does not have the tp gain penalty
     if actingBattler.isActor and skill:isHyper() then
         actingBattler:updateHyperTurns()

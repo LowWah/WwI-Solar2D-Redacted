@@ -1155,25 +1155,37 @@ local actors = {
         unique={
             icon=57,
             name='Witch Apprentice',
-            description='Non-ultimate damage skills have a 20% chance to target all enemies\n\nA true witch has complete mastery over her spells, unfortunately you are not one yet',
+            description='Non-ultimate damage skills have a 35% chance to target all enemies\n\nA true witch has complete mastery over her spells, unfortunately you are not one yet',
             effects={
                 editTargetsSelf=function(self, actingBattler, skill, targets, battleManager)
                     --non-ultimate skills, use mp to identify
                     if skill:cost() > 0 and skill:target() == 2 then
-                        local chance = self.buffs[self.hyperId] and 0.6 or 0.2
+                        local chance = 0.35
                         if math.random() < chance then
+                            --for hyper
+                            self.witchApprentice = true
                             --target all enemies
                             return battleManager:aliveMembers(false)
                         end
                     end
                     return targets
+                end,
+                completeActionActingSelfIncludeFollow=function(self, actingBattler, skill, targets, battleManager)
+                    if self.witchApprentice then
+                        self.witchApprentice = false
+                        if self.buffs[self.hyperId] then
+                            local aliveEnemies = battleManager:aliveMembers(false)
+                            local randomTarget = aliveEnemies[math.floor(math.random() * #aliveEnemies) + 1]
+                            battleManager:addFollowup(self, skill, { randomTarget })
+                        end
+                    end
                 end
             }
         },
         hyper={
             --effect is in unique
             name='Pure Blood',
-            description='Witch Apprentice chance increase to 60%\n\nThose of pure blood are able to cast the most dangerous of spells',
+            description='When Witch Apprentice activates, skill will repeat and can apply Witch Apprentice\n\nThose of pure blood are able to cast the most dangerous of spells',
             hyperId=10,
             icon=58
         }
@@ -2008,7 +2020,7 @@ local actors = {
         hyper={
             --Effect in unique
             name='Owl Gust',
-            description='Every turn apply a buff to all allies which increases speed by 100\n\nThe owl anima turns its winds into gust',
+            description='Every turn apply a buff to all allies which increases speed by 50\n\nThe owl anima turns its winds into gust',
             hyperId=10,
             icon=58
         }

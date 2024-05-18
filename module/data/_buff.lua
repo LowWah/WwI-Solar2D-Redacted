@@ -101,7 +101,7 @@ local buffs = {
         id=19,
         name='Owl Gust',
         icon=82,
-        speed=100
+        speed=50
     },
     {
         id=20,
