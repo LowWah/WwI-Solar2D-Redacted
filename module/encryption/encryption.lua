@@ -83,10 +83,6 @@ M.decryptImage = function(filename)
             io.close(file)
             bytes = decrypt(bytes)
 
-            while string.byte(bytes, -1) == string.byte('0') do
-                bytes = string.sub(bytes, 1, -2)
-            end
-
             local outputFile = io.open(system.pathForFile(finalFilename, directory), 'wb')
             outputFile:write(bytes)
             io.close(outputFile)
@@ -101,12 +97,29 @@ M.finaliseDecryptImage = function(filename)
         imageCache[filename][2] = false
         local finalFilename = imageCache[filename][1] .. CONSTANTS.fileImage
 
+        --delete it after one second
+        timer.performWithDelay(500, function(event)
+            local removed = os.remove(system.pathForFile(finalFilename, system.TemporaryDirectory))
+            if removed then
+                local outputFile = io.open(system.pathForFile(finalFilename, system.TemporaryDirectory), 'w')
+                io.close(outputFile)
+
+                timer.cancel(event.source)
+            end
+            
+        end, 10)
+
+        --[[
+        assert(os.remove(system.pathForFile(finalFilename, system.TemporaryDirectory)))
+
         --even though load image is cached it still needs a file to exist, so we replace it with a blank
         --for some reason we cant simply write over the file (encounter File Error - Invalid Argument), so we delete the file first
         os.remove(system.pathForFile(finalFilename, system.TemporaryDirectory))
 
         local outputFile = io.open(system.pathForFile(finalFilename, system.TemporaryDirectory), 'w')
         io.close(outputFile)
+
+        ]]
     end
 end
 
