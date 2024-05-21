@@ -2,8 +2,8 @@ local M = {}
 
 local isSimulator = 'simulator' == system.getInfo('environment')
 
-local key = <GET KEY SOMEHOW>
-local iv = <GET IV SOMEHOW>
+local key = '' --insert real key here
+local iv = '' --insert real iv here
 
 local cipher = require('plugin.openssl').get_cipher('aes-256-cbc')
 local decrypt = function(bytes)
